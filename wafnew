@@ -2,6 +2,9 @@
 import os, sys
 from subprocess import call, Popen, PIPE
 
+REPOSITORY = "https://github.com/nakajijiji/waf-template/tarball/master"
+TMP_DIR = "/tmp/waf-tmp"
+
 if len(sys.argv) == 1:
 	print "ERROR : project name is not indicated"
 	print "usage : wafnew <project-name>"
@@ -15,15 +18,15 @@ if os.path.exists(newdir):
 
 print "building waf template project : " + newdir
 
-call(["mkdir", "-p", "/tmp/waf-tmp"])
+call(["mkdir", "-p", TMP_DIR])
 call(["rm", "-rf", "*"])
-p1 = Popen(["curl", "-s", "-f", "-L", "https://github.com/nakajijiji/waf-template/tarball/master"], stdout=PIPE)
-p2 = Popen(["tar", "xvz", "-C", "/tmp/waf-tmp"], stdin=p1.stdout, stdout=PIPE)
+p1 = Popen(["curl", "-s", "-f", "-L", REPOSITORY], stdout=PIPE)
+p2 = Popen(["tar", "xvz", "-C", TMP_DIR], stdin=p1.stdout, stdout=PIPE)
 p1.stdout.close()
 output = p2.communicate()[0]
 
 dir = output.split("\n")[0][:-1]
 
-call(["mv", "/tmp/waf-tmp/" + dir, newdir])
+call(["mv", TMP_DIR + "/" + dir, newdir])
 call(["rm", "-rf", "*"])
 print "SUCCESS!!"
